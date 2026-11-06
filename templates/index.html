@@ -1,0 +1,984 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLV Dance Company · Attendance</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<style>
+:root{
+  --navy-950:#0A1449;--navy-900:#0F1F5C;--navy-800:#152B78;--navy-700:#1E3A99;
+  --navy-100:#E6ECFA;--navy-50:#F2F5FC;
+  --gold-600:#D99A00;--gold-500:#F5B301;--gold-400:#FFC72C;--gold-100:#FFF6D6;
+  --ink:#111827;--ink-2:#374151;--muted:#6B7280;--border:#E5E7EB;
+  --bg:#F7F8FB;--card:#FFFFFF;--green:#16A34A;--amber:#D97706;--red:#DC2626;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;font-size:14.5px;line-height:1.5}
+h1,h2,h3{font-family:'Playfair Display',Georgia,serif;font-weight:700;color:var(--navy-900);margin:0}
+a{color:var(--navy-700);text-decoration:none;cursor:pointer}
+button{font:inherit;cursor:pointer;border:0}
+input,select,textarea{font:inherit;padding:.55rem .7rem;border:1px solid var(--border);
+  border-radius:4px;background:#fff;width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--gold-400);border-color:var(--gold-500)}
+label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;
+  color:var(--muted);margin-bottom:.3rem;font-weight:600}
+.topbar{background:var(--navy-900);color:#fff;padding:.9rem 1.6rem;
+  display:flex;justify-content:space-between;align-items:center;
+  border-bottom:3px solid var(--gold-500)}
+.brand{display:flex;align-items:center;gap:.85rem}
+.brand .mark{width:42px;height:42px;border-radius:8px;background:var(--gold-400);
+  color:var(--navy-950);display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-weight:700;font-size:1.05rem;
+  border:2px solid var(--gold-500)}
+.brand .name{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;line-height:1.1}
+.brand .sub{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--gold-400)}
+.userbox{display:flex;align-items:center;gap:.7rem;font-size:.85rem}
+.userbox .who{text-align:right;line-height:1.15}
+.userbox .who small{color:#c7d2fe;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
+.logout{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.35);
+  padding:.35rem .75rem;border-radius:4px;font-size:.82rem}
+.logout:hover{background:rgba(255,255,255,.1)}
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 66px)}
+.sidebar{background:#fff;border-right:1px solid var(--border);padding:1rem 0}
+.sidebar a{display:block;padding:.7rem 1.2rem;color:var(--ink-2);font-weight:500;
+  border-left:3px solid transparent;font-size:.9rem}
+.sidebar a:hover{background:var(--navy-50)}
+.sidebar a.active{background:var(--navy-50);color:var(--navy-900);
+  border-left-color:var(--gold-500);font-weight:600}
+.sidebar .section{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);padding:.9rem 1.2rem .25rem;font-weight:600}
+main{padding:1.8rem 2rem;max-width:1150px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;
+  padding:1.3rem 1.4rem;margin-bottom:1.2rem}
+.card h2{font-size:1.15rem;margin-bottom:.3rem}
+.card .lead{color:var(--muted);font-size:.88rem;margin:0 0 1rem}
+.grid{display:grid;gap:1rem}
+.grid-2{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;
+  padding:.6rem 1rem;border-radius:5px;font-weight:600;font-size:.85rem;transition:.12s}
+.btn-primary{background:var(--gold-400);color:var(--navy-950);border:1px solid var(--gold-500)}
+.btn-primary:hover{background:var(--gold-500)}
+.btn-secondary{background:var(--navy-900);color:#fff;border:1px solid var(--navy-900)}
+.btn-secondary:hover{background:var(--navy-800)}
+.btn-ghost{background:#fff;color:var(--navy-900);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--navy-50);border-color:var(--navy-700)}
+.btn-sm{padding:.35rem .7rem;font-size:.78rem}
+.btn-danger{background:#fff;color:var(--red);border:1px solid #fecaca}
+.btn-danger:hover{background:#fef2f2}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.badge{display:inline-block;padding:.16rem .55rem;border-radius:99px;
+  font-size:.72rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.b-exec{background:var(--navy-900);color:var(--gold-400)}
+.b-member{background:var(--navy-100);color:var(--navy-900)}
+.b-provi{background:var(--gold-100);color:var(--gold-600)}
+.b-present{background:#DCFCE7;color:#166534}
+.b-late{background:#FEF3C7;color:#92400E}
+.b-excused{background:#DBEAFE;color:#1E40AF}
+.b-absent{background:#FEE2E2;color:#991B1B}
+.b-none{background:#F3F4F6;color:#6B7280}
+.b-type{background:var(--navy-50);color:var(--navy-800);border:1px solid var(--navy-100)}
+.b-mandatory{background:#FEE2E2;color:#991B1B}
+.b-unclaimed{background:#FEF3C7;color:#92400E}
+.b-flag{background:#FEE2E2;color:#991B1B}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.85rem;margin:1rem 0}
+.stat{background:#fff;border:1px solid var(--border);border-radius:8px;padding:1rem}
+.stat .n{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--navy-900);line-height:1}
+.stat .l{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:.35rem;font-weight:600}
+.stat.gold .n{color:var(--gold-600)}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{padding:.65rem .55rem;text-align:left;border-bottom:1px solid var(--border);font-size:.87rem;vertical-align:middle}
+.table th{background:var(--navy-50);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--navy-800);font-weight:700;border-bottom:2px solid var(--gold-500)}
+.table tr:hover td{background:#fcfcfe}
+.session-item{border:1px solid var(--border);border-radius:8px;padding:1rem 1.1rem;
+  margin-bottom:.7rem;background:#fff;display:flex;justify-content:space-between;
+  gap:1rem;align-items:center;flex-wrap:wrap}
+.session-item.pinned{border-left:4px solid var(--gold-500);background:#fffdf5}
+.session-item .info{flex:1;min-width:220px}
+.session-item .title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:var(--navy-900);margin-bottom:.25rem}
+.session-item .meta{font-size:.8rem;color:var(--muted);display:flex;gap:.8rem;flex-wrap:wrap;align-items:center}
+.qr-box{background:#fff;border:2px solid var(--navy-900);border-radius:8px;padding:.6rem;display:inline-block}
+.qr-box img{display:block;width:240px;height:240px}
+.qr-timer{font-family:ui-monospace,monospace;font-weight:700;color:var(--gold-600);font-size:1.1rem}
+.code-display{font-family:ui-monospace,Menlo,monospace;background:var(--navy-900);
+  color:var(--gold-400);padding:.6rem .9rem;border-radius:5px;font-size:1.4rem;
+  letter-spacing:.25em;font-weight:700;display:inline-block}
+.msg{padding:.6rem .9rem;border-radius:5px;font-size:.85rem;margin-top:.7rem;display:none}
+.msg.show{display:block}
+.msg.err{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA}
+.msg.ok{background:#F0FDF4;color:#166534;border:1px solid #BBF7D0}
+.msg.warn{background:#FEF3C7;color:#92400E;border:1px solid #FDE68A}
+.auth-wrap{min-height:100vh;display:grid;place-items:center;padding:2rem;
+  background:linear-gradient(135deg,var(--navy-950),var(--navy-800) 60%,var(--navy-700))}
+.auth-card{background:#fff;border-radius:10px;padding:2.2rem 2rem;width:100%;max-width:440px;
+  box-shadow:0 20px 40px rgba(0,0,0,.25);border-top:5px solid var(--gold-500)}
+.auth-card h1{font-size:1.5rem;margin-bottom:.25rem;text-align:center}
+.auth-card .tag{color:var(--muted);font-size:.85rem;margin-bottom:1.5rem;text-align:center}
+.auth-card .field{margin-bottom:.85rem}
+.auth-card .switch{font-size:.85rem;color:var(--muted);text-align:center;margin-top:1rem}
+.auth-card .switch a{font-weight:600}
+.auth-tabs{display:flex;gap:.3rem;border-bottom:1px solid var(--border);margin-bottom:1.2rem}
+.auth-tabs button{background:none;padding:.6rem 1rem;font-weight:600;font-size:.85rem;
+  color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;flex:1}
+.auth-tabs button.active{color:var(--navy-900);border-bottom-color:var(--gold-500)}
+.tabs{display:flex;gap:.2rem;border-bottom:1px solid var(--border);margin-bottom:1.2rem}
+.tabs button{background:none;padding:.6rem 1rem;font-weight:600;font-size:.85rem;
+  color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button.active{color:var(--navy-900);border-bottom-color:var(--gold-500)}
+.toolbar{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-bottom:1rem}
+.toolbar .grow{flex:1}
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--muted);font-size:.9rem}
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--navy-900);color:#fff;
+  padding:.8rem 1.1rem;border-radius:6px;box-shadow:0 8px 20px rgba(0,0,0,.2);
+  font-size:.87rem;opacity:0;transform:translateY(10px);transition:.25s;z-index:50;
+  border-left:4px solid var(--gold-500);max-width:340px}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.error{border-left-color:var(--red)}
+.modal-bg{position:fixed;inset:0;background:rgba(10,20,73,.55);display:flex;
+  align-items:center;justify-content:center;z-index:40;padding:1rem}
+.modal{background:#fff;border-radius:10px;padding:1.6rem 1.7rem;max-width:520px;
+  width:100%;max-height:90vh;overflow-y:auto;border-top:4px solid var(--gold-500)}
+#qr-reader{width:100%;border-radius:8px;overflow:hidden}
+#qr-reader video{width:100%!important}
+.policy-content{line-height:1.7;font-size:.92rem}
+.policy-content h1{font-size:1.4rem;margin:1rem 0 .6rem}
+.policy-content h2{font-size:1.1rem;margin:1.2rem 0 .5rem;padding-bottom:.3rem;border-bottom:1px solid var(--border)}
+.policy-content h3{font-size:.95rem;margin:1rem 0 .4rem}
+.policy-content table{width:100%;border-collapse:collapse;margin:.6rem 0}
+.policy-content table th,.policy-content table td{border:1px solid var(--border);padding:.4rem .6rem;font-size:.85rem}
+.policy-content code{background:var(--navy-50);padding:.1rem .35rem;border-radius:3px;font-size:.85em}
+@media (max-width:780px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:flex;overflow-x:auto;padding:0;border-right:0;border-bottom:1px solid var(--border)}
+  .sidebar a{white-space:nowrap;border-left:0;border-bottom:3px solid transparent;padding:.8rem 1rem}
+  .sidebar a.active{border-left:0;border-bottom-color:var(--gold-500)}
+  .sidebar .section{display:none}
+  main{padding:1.2rem 1rem}
+}
+</style></head><body>
+<div id="app"></div><div id="toast" class="toast"></div>
+<script>
+const S = { authType:null, user:null, admin:null, view:null, sid:null, tab:null,
+            scanner:null, qrTimer:null, liveTimer:null };
+const $app = document.getElementById('app');
+const toastEl = document.getElementById('toast');
+let toastT;
+const esc = s => (s==null?'':String(s)).replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const TIER_LABEL = {exec:'Executive Board', member:'Official Member', provi:'Provisionary'};
+const tierBadge = t => `<span class="badge b-${t}">${TIER_LABEL[t]||t}</span>`;
+const statusBadge = s => s ? `<span class="badge b-${s}">${s}</span>` : `<span class="badge b-none">not recorded</span>`;
+const typeBadge = t => `<span class="badge b-type">${t}</span>`;
+function fmtDate(iso){
+  if(!iso) return '—';
+  const d = new Date(iso); if(isNaN(d)) return iso;
+  return d.toLocaleString(undefined,{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+}
+function fmtTime(iso){
+  if(!iso) return '—';
+  const d = new Date(iso); if(isNaN(d)) return iso;
+  return d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
+}
+function toast(m, err=false){
+  toastEl.textContent = m;
+  toastEl.className = 'toast show' + (err?' error':'');
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>toastEl.className='toast', 3200);
+}
+async function api(path, method='GET', body=null){
+  const res = await fetch(path,{method,headers:{'Content-Type':'application/json'},
+    body: body?JSON.stringify(body):null});
+  let data = {}; try{data = await res.json();}catch(e){}
+  if (res.status===401 && !path.includes('/login') && !path.includes('/claim')){
+    S.authType=null; S.user=null; renderAuth(); throw new Error('Session expired');
+  }
+  if (!res.ok) throw new Error(data.error || res.statusText);
+  return data;
+}
+async function computeDeviceHash(){
+  try{
+    const parts = [
+      navigator.userAgent, navigator.language || '',
+      screen.width + 'x' + screen.height + 'x' + (screen.colorDepth||''),
+      new Date().getTimezoneOffset(),
+      navigator.hardwareConcurrency || '',
+      navigator.platform || ''
+    ];
+    const data = new TextEncoder().encode(parts.join('|'));
+    const hash = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  } catch(e){ return null; }
+}
+
+/* ---------- AUTH ---------- */
+function renderAuth(mode='user', action='login'){
+  $app.innerHTML = `
+  <div class="auth-wrap"><div class="auth-card">
+    <div style="text-align:center;margin-bottom:1.2rem">
+      <div style="display:inline-flex;width:60px;height:60px;border-radius:10px;
+        background:var(--gold-400);color:var(--navy-950);align-items:center;
+        justify-content:center;font-family:'Playfair Display',serif;font-weight:700;
+        font-size:1.15rem;border:2px solid var(--gold-500);margin-bottom:.7rem">PLV</div>
+      <h1>PLV Dance Company</h1>
+      <div class="tag">Attendance Portal · Fri &amp; Sat · 5:30–8:30 PM</div>
+    </div>
+    <div class="auth-tabs">
+      <button class="${mode==='user'?'active':''}" onclick="renderAuth('user','${action}')">Attendee</button>
+      <button class="${mode==='admin'?'active':''}" onclick="renderAuth('admin','login')">Admin</button>
+    </div>
+    ${mode==='admin' ? `
+      <div class="field"><label>Admin Username</label><input id="a_user"></div>
+      <div class="field"><label>Password</label><input id="a_pw" type="password"></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:.5rem" onclick="doAdminLogin()">Sign In as Admin</button>
+      <div class="switch" style="font-size:.78rem;margin-top:1rem">
+        Shared by the Executive Board. Ask the president for credentials.
+      </div>
+    ` : action==='login' ? `
+      <div class="field"><label>Student ID</label><input id="a_sid" placeholder="e.g. 2024-00123"></div>
+      <div class="field"><label>Password</label><input id="a_pw" type="password"></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:.5rem" onclick="doUserLogin()">Sign In</button>
+      <div class="switch">First time here? <a onclick="renderAuth('user','claim')">Claim your account</a></div>
+    ` : `
+      <div class="field"><label>Student ID</label><input id="r_sid"></div>
+      <div class="field"><label>Full Name</label><input id="r_name" placeholder="must match our roster"></div>
+      <div class="field"><label>Password (min 6 chars)</label><input id="r_pw" type="password"></div>
+      <div class="field"><label>Confirm Password</label><input id="r_pw2" type="password"></div>
+      <div class="field"><label>Email (optional)</label><input id="r_email" type="email"></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:.5rem" onclick="doClaim()">Claim Account</button>
+      <div class="switch">Already registered? <a onclick="renderAuth('user','login')">Sign in</a></div>
+    `}
+    <div id="a_msg" class="msg err"></div>
+  </div></div>`;
+  const enter = e => { if(e.key==='Enter'){
+    if(mode==='admin') doAdminLogin();
+    else if(action==='login') doUserLogin();
+    else doClaim();
+  }};
+  ['a_user','a_pw','a_sid','r_sid','r_name','r_pw','r_pw2','r_email'].forEach(id=>{
+    const el = document.getElementById(id); if(el) el.addEventListener('keydown', enter);
+  });
+}
+function showAuthErr(m){
+  const el = document.getElementById('a_msg'); el.textContent = m; el.classList.add('show');
+}
+async function doAdminLogin(){
+  try {
+    await api('/api/login','POST',{mode:'admin',
+      username: document.getElementById('a_user').value,
+      password: document.getElementById('a_pw').value});
+    S.authType='admin'; S.admin={username:'admin'}; S.view='admin-dashboard'; render();
+  } catch(e){ showAuthErr(e.message); }
+}
+async function doUserLogin(){
+  try {
+    const d = await api('/api/login','POST',{mode:'user',
+      student_id: document.getElementById('a_sid').value,
+      password: document.getElementById('a_pw').value});
+    S.authType='user'; S.user=d.user; S.view='my-dashboard'; render();
+  } catch(e){ showAuthErr(e.message); }
+}
+async function doClaim(){
+  const p1 = document.getElementById('r_pw').value;
+  const p2 = document.getElementById('r_pw2').value;
+  if (p1 !== p2){ showAuthErr('Passwords do not match'); return; }
+  try {
+    const d = await api('/api/claim','POST',{
+      student_id: document.getElementById('r_sid').value,
+      name: document.getElementById('r_name').value,
+      password: p1,
+      email: document.getElementById('r_email').value});
+    S.authType='user'; S.user=d.user; S.view='my-dashboard';
+    render(); toast('Account claimed. Welcome!');
+  } catch(e){ showAuthErr(e.message); }
+}
+async function doLogout(){
+  await api('/api/logout','POST'); S.authType=null; S.user=null; renderAuth();
+}
+
+/* ---------- SHELLS ---------- */
+function adminShell(){
+  return `
+    <header class="topbar">
+      <div class="brand"><div class="mark">PLV</div><div>
+        <div class="name">PLV Dance Company</div>
+        <div class="sub">Admin · Executive Board</div></div></div>
+      <div class="userbox"><div class="who">
+        <div style="font-weight:600">Executive Board</div>
+        <small>Administrator</small></div>
+        <button class="logout" onclick="doLogout()">Sign Out</button></div>
+    </header>
+    <div class="layout"><nav class="sidebar">
+      <div class="section">Admin</div>
+      <a data-view="admin-dashboard" onclick="go('admin-dashboard')">Dashboard</a>
+      <a data-view="admin-sessions" onclick="go('admin-sessions')">Classes &amp; Sessions</a>
+      <a data-view="admin-attendees" onclick="go('admin-attendees')">Roster</a>
+      <a data-view="admin-flags" onclick="go('admin-flags')">Flags &amp; Audit</a>
+      <a data-view="admin-trace" onclick="go('admin-trace')">Contact Trace</a>
+      <div class="section">Account</div>
+      <a onclick="openChangePassword()">Change Password</a>
+    </nav><main id="main"></main></div>`;
+}
+function userShell(){
+  const u = S.user;
+  return `
+    <header class="topbar">
+      <div class="brand"><div class="mark">PLV</div><div>
+        <div class="name">PLV Dance Company</div>
+        <div class="sub">Attendance Portal</div></div></div>
+      <div class="userbox"><div class="who">
+        <div style="font-weight:600">${esc(u.name)}</div>
+        <small>${TIER_LABEL[u.tier]}</small></div>
+        <button class="logout" onclick="doLogout()">Sign Out</button></div>
+    </header>
+    <div class="layout"><nav class="sidebar">
+      <div class="section">Attendee</div>
+      <a data-view="my-dashboard" onclick="go('my-dashboard')">Dashboard</a>
+      <a data-view="my-sessions" onclick="go('my-sessions')">Upcoming Classes</a>
+      <a data-view="my-attendance" onclick="go('my-attendance')">My Attendance</a>
+      <a data-view="my-rules" onclick="go('my-rules')">Rules &amp; Policies</a>
+    </nav><main id="main"></main></div>`;
+}
+function updateActiveNav(){
+  document.querySelectorAll('.sidebar a').forEach(a => a.classList.toggle('active', a.dataset.view === S.view));
+}
+
+/* ---------- ROUTER ---------- */
+async function render(){
+  stopTimers();
+  if(!S.authType){
+    try{
+      const d = await api('/api/me');
+      S.authType = d.type;
+      if (d.type==='admin') S.admin = d; else S.user = d.user;
+      S.view = d.type==='admin' ? 'admin-dashboard' : 'my-dashboard';
+    } catch(e){ renderAuth(); return; }
+  }
+  $app.innerHTML = S.authType==='admin' ? adminShell() : userShell();
+  const main = document.getElementById('main');
+  try {
+    if (S.authType==='admin'){
+      if      (S.view==='admin-dashboard') await vAdminDashboard(main);
+      else if (S.view==='admin-sessions')  await vAdminSessions(main);
+      else if (S.view==='admin-session')   await vAdminSession(main, S.sid);
+      else if (S.view==='admin-attendees') await vAdminAttendees(main);
+      else if (S.view==='admin-flags')     await vAdminFlags(main);
+      else if (S.view==='admin-trace')     await vAdminTrace(main);
+      else await vAdminDashboard(main);
+    } else {
+      if      (S.view==='my-dashboard')  await vUserDashboard(main);
+      else if (S.view==='my-sessions')   await vUserSessions(main);
+      else if (S.view==='my-attendance') await vUserAttendance(main);
+      else if (S.view==='my-rules')      await vUserRules(main);
+      else await vUserDashboard(main);
+    }
+    updateActiveNav();
+  } catch(e){
+    main.innerHTML = `<div class="card"><div class="msg err show">${esc(e.message)}</div></div>`;
+  }
+}
+function go(v){ S.view = v; render(); }
+function stopTimers(){
+  if (S.qrTimer){ clearInterval(S.qrTimer); S.qrTimer = null; }
+  if (S.liveTimer){ clearInterval(S.liveTimer); S.liveTimer = null; }
+  if (S.scanner){ try{ S.scanner.stop(); }catch(e){} S.scanner = null; }
+}
+
+/* ---------- ADMIN: DASHBOARD ---------- */
+async function vAdminDashboard(main){
+  const d = await api('/api/admin/dashboard');
+  const warn = d.using_default_password
+    ? `<div class="msg warn show" style="margin-bottom:1rem">⚠ Admin password is default.
+       <a onclick="openChangePassword()">Change it</a>.</div>` : '';
+  const flagWarn = d.unresolved_flags
+    ? `<div class="msg warn show" style="margin-bottom:1rem">
+         ${d.unresolved_flags} unresolved flag${d.unresolved_flags===1?'':'s'} — 
+         <a onclick="go('admin-flags')">review now</a>.</div>` : '';
+  const todayBlock = d.today_class ? `
+    <div class="session-item pinned"><div class="info">
+      <div class="title">Today · ${esc(d.today_class.title)}</div>
+      <div class="meta">${typeBadge(d.today_class.type)}
+        <span>${fmtTime(d.today_class.starts_at)} – ${fmtTime(d.today_class.ends_at)}</span>
+      </div></div>
+      <button class="btn btn-secondary btn-sm" onclick="openAdminSession(${d.today_class.id})">Open · Show QR</button>
+    </div>` : `<div class="empty">No class scheduled for today.</div>`;
+  const recentFlags = d.recent_flags.length ? d.recent_flags.map(f=>`
+    <div class="session-item" style="border-left:3px solid var(--red)">
+      <div class="info"><div class="title" style="font-size:.9rem">${esc(f.kind.replace(/_/g,' '))}</div>
+        <div class="meta"><span>${esc(f.user_name||'?')}</span>
+          <span>${esc(f.session_title||'')}</span>
+          <span>${fmtDate(f.created_at)}</span></div>
+        <div style="font-size:.82rem;color:var(--muted);margin-top:.3rem">${esc(f.detail||'')}</div>
+      </div></div>`).join('') : '<div class="empty">No flags raised.</div>';
+  main.innerHTML = `${warn}${flagWarn}
+    <div class="card" style="border-left:4px solid var(--gold-500)">
+      <h2>Admin Dashboard</h2>
+      <p class="lead">Every Friday &amp; Saturday · 5:30 PM – 8:30 PM · Rotating QR every 30s</p>
+    </div>
+    <div class="card"><h2>Attendees by Tier</h2>
+      <div class="stats">
+        <div class="stat"><div class="n">${d.tiers.exec}</div><div class="l">Executive Board</div></div>
+        <div class="stat"><div class="n">${d.tiers.member}</div><div class="l">Official Members</div></div>
+        <div class="stat gold"><div class="n">${d.tiers.provi}</div><div class="l">Provisionary</div></div>
+        <div class="stat"><div class="n">${d.tiers.total}</div><div class="l">Total Active</div></div>
+        <div class="stat"><div class="n">${d.tiers.unclaimed}</div><div class="l">Unclaimed</div></div>
+      </div></div>
+    <div class="card"><h2>Today's Class</h2>${todayBlock}</div>
+    <div class="card"><h2>Recent Flags</h2><p class="lead">Anti-cheat warnings requiring review.</p>${recentFlags}</div>`;
+}
+
+/* ---------- ADMIN: SESSIONS ---------- */
+async function vAdminSessions(main){
+  const tab = S.tab || 'upcoming';
+  const d = await api('/api/admin/sessions?past='+(tab==='past'?1:0));
+  const list = d.sessions.length ? d.sessions.map(s=>`
+    <div class="session-item"><div class="info">
+      <div class="title">${esc(s.title)}</div>
+      <div class="meta">${typeBadge(s.type)}<span>${fmtDate(s.starts_at)}</span>
+        <span>${s.checked_in} checked in</span></div></div>
+      <button class="btn btn-secondary btn-sm" onclick="openAdminSession(${s.id})">Open</button>
+    </div>`).join('') : `<div class="empty">No ${tab} sessions.</div>`;
+  main.innerHTML = `
+    <div class="toolbar">
+      <div class="grow"><h2>Classes &amp; Sessions</h2></div>
+      <button class="btn btn-ghost" onclick="generateClasses()">Generate Classes (4 weeks)</button>
+      <button class="btn btn-primary" onclick="openCreateSession()">+ Custom Session</button>
+    </div>
+    <div class="tabs">
+      <button class="${tab==='upcoming'?'active':''}" onclick="setTab('upcoming')">Upcoming</button>
+      <button class="${tab==='past'?'active':''}" onclick="setTab('past')">Past</button>
+    </div>
+    <div class="card" style="padding:1rem 1.2rem">${list}</div>`;
+}
+function setTab(t){ S.tab=t; render(); }
+function openAdminSession(id){ S.sid=id; S.view='admin-session'; render(); }
+async function generateClasses(){
+  try{
+    const d = await api('/api/admin/sessions/generate-classes','POST',{weeks:4});
+    toast(d.created ? `Created ${d.created} class${d.created===1?'':'es'}.` : 'All classes already exist.');
+    render();
+  } catch(e){ toast(e.message, true); }
+}
+function openCreateSession(){
+  const div = document.createElement('div'); div.id='createModal';
+  div.innerHTML = `
+    <div class="modal-bg" onclick="if(event.target===this)closeModal('createModal')">
+      <div class="modal">
+        <h2 style="margin-bottom:.3rem">Custom Session</h2>
+        <p class="lead">For performances, workshops, extra rehearsals, etc.</p>
+        <div class="grid grid-2">
+          <div style="grid-column:1/-1"><label>Title</label><input id="c_title"></div>
+          <div><label>Type</label><select id="c_type">
+            <option value="class">Class</option><option value="performance">Performance</option>
+            <option value="workshop">Workshop</option><option value="meeting">Meeting</option>
+            <option value="audition">Audition</option><option value="other">Other</option></select></div>
+          <div><label>Mandatory?</label><select id="c_mand"><option value="1">Yes</option><option value="0">No</option></select></div>
+          <div><label>Starts At</label><input id="c_start" type="datetime-local"></div>
+          <div><label>Ends At</label><input id="c_end" type="datetime-local"></div>
+          <div><label>Grace Minutes</label><input id="c_grace" type="number" value="15" min="0"></div>
+          <div style="grid-column:1/-1"><label>Notes</label><textarea id="c_notes" rows="2"></textarea></div>
+        </div>
+        <div id="c_msg" class="msg err"></div>
+        <div style="display:flex;gap:.5rem;justify-content:flex-end;margin-top:1rem">
+          <button class="btn btn-ghost" onclick="closeModal('createModal')">Cancel</button>
+          <button class="btn btn-primary" onclick="submitCreateSession()">Create</button>
+        </div>
+      </div></div>`;
+  document.body.appendChild(div);
+}
+function closeModal(id){ const m = document.getElementById(id); if(m) m.remove(); }
+async function submitCreateSession(){
+  const msg = document.getElementById('c_msg'); msg.classList.remove('show');
+  try{
+    const d = await api('/api/admin/sessions','POST',{
+      title: document.getElementById('c_title').value,
+      type: document.getElementById('c_type').value,
+      is_mandatory: document.getElementById('c_mand').value === '1',
+      starts_at: document.getElementById('c_start').value,
+      ends_at: document.getElementById('c_end').value || null,
+      grace_minutes: parseInt(document.getElementById('c_grace').value)||15,
+      notes: document.getElementById('c_notes').value || null,
+    });
+    toast('Session created'); closeModal('createModal'); render();
+  } catch(e){ msg.textContent = e.message; msg.classList.add('show'); }
+}
+
+/* ---------- ADMIN: SESSION DETAIL with ROTATING QR ---------- */
+async function vAdminSession(main, sid){
+  const [sd, ad, live] = await Promise.all([
+    api('/api/admin/sessions/'+sid),
+    api('/api/admin/sessions/'+sid+'/attendance'),
+    api('/api/admin/sessions/'+sid+'/live')
+  ]);
+  const s = sd.session, recs = ad.records;
+  const rows = recs.map(r => `
+    <tr>
+      <td><strong>${esc(r.name)}</strong><br><small style="color:var(--muted)">${esc(r.student_id)}</small></td>
+      <td>${tierBadge(r.tier)}</td>
+      <td>${statusBadge(r.status)}</td>
+      <td>${r.check_in_at ? fmtTime(r.check_in_at) : '—'}</td>
+      <td>${r.check_out_at ? fmtTime(r.check_out_at) : '—'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-ghost btn-sm" onclick="markAtt(${sid},${r.user_id},'present')">P</button>
+        <button class="btn btn-ghost btn-sm" onclick="markAtt(${sid},${r.user_id},'late')">L</button>
+        <button class="btn btn-ghost btn-sm" onclick="markAtt(${sid},${r.user_id},'excused')">E</button>
+        <button class="btn btn-ghost btn-sm" onclick="markAtt(${sid},${r.user_id},'absent')">A</button>
+      </td>
+    </tr>`).join('');
+
+  main.innerHTML = `
+    <div class="toolbar">
+      <button class="btn btn-ghost btn-sm" onclick="go('admin-sessions')">← Back</button>
+      <div class="grow"></div>
+      <a class="btn btn-ghost btn-sm" href="/api/admin/sessions/${sid}/attendance.csv">Export CSV</a>
+    </div>
+    <div class="card" style="border-left:4px solid var(--gold-500)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:2rem;flex-wrap:wrap">
+        <div style="flex:1;min-width:260px">
+          <h2>${esc(s.title)}</h2>
+          <div class="meta" style="color:var(--muted);font-size:.85rem;margin-top:.4rem;display:flex;gap:.8rem;flex-wrap:wrap;align-items:center">
+            ${typeBadge(s.type)}
+            <span>${fmtDate(s.starts_at)}${s.ends_at?' → '+fmtTime(s.ends_at):''}</span>
+            <span>Grace: ${s.grace_minutes} min</span>
+          </div>
+          <div style="margin-top:1.2rem">
+            <div style="font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem">
+              Manual Code · Rotates every 30s
+            </div>
+            <div class="code-display" id="qr-code">······</div>
+            <span style="margin-left:.8rem;color:var(--muted);font-size:.82rem">
+              Refresh in <span class="qr-timer" id="qr-timer">30</span>s
+            </span>
+          </div>
+          <p style="color:var(--muted);font-size:.85rem;margin-top:1rem">
+            Project this QR. Screenshots expire within 30 seconds — that's how we prevent sharing.
+          </p>
+          <div style="margin-top:1rem;font-size:.9rem">
+            Live check-in count: <strong id="live-count">${live.count}</strong>
+          </div>
+        </div>
+        <div style="text-align:center">
+          <div class="qr-box"><img id="qr-img" alt="Check-in QR"></div>
+          <div style="font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:.5rem">Scan to check in</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Roster · ${recs.length} attendee${recs.length===1?'':'s'}</h2>
+      <p class="lead">P = Present · L = Late · E = Excused · A = Absent</p>
+      <table class="table"><thead><tr>
+        <th>Name</th><th>Tier</th><th>Status</th><th>In</th><th>Out</th><th>Mark</th>
+      </tr></thead><tbody>${rows || '<tr><td colspan="6" class="empty">No attendees on the roster yet.</td></tr>'}</tbody></table>
+    </div>`;
+
+  const refreshQR = async () => {
+    try{
+      const d = await api('/api/admin/sessions/'+sid+'/qr-data');
+      const img = document.getElementById('qr-img');
+      const codeEl = document.getElementById('qr-code');
+      const timerEl = document.getElementById('qr-timer');
+      if (img) img.src = d.qr_png;
+      if (codeEl) codeEl.textContent = d.code;
+      if (timerEl) timerEl.textContent = d.seconds_left;
+    } catch(e){ /* ignore */ }
+  };
+  await refreshQR();
+  S.qrTimer = setInterval(refreshQR, 10000);
+
+  S.liveTimer = setInterval(async () => {
+    try{
+      const d = await api('/api/admin/sessions/'+sid+'/live');
+      const el = document.getElementById('live-count');
+      if (el) el.textContent = d.count;
+    } catch(e){}
+  }, 5000);
+}
+async function markAtt(sid, uid, status){
+  try{ await api('/api/admin/sessions/'+sid+'/attendance/'+uid,'POST',{status});
+    toast('Marked '+status); render(); } catch(e){ toast(e.message, true); }
+}
+
+/* ---------- ADMIN: ROSTER ---------- */
+async function vAdminAttendees(main){
+  const d = await api('/api/admin/attendees');
+  const claimed = d.attendees.filter(a => a.is_claimed).length;
+  const unclaimed = d.attendees.length - claimed;
+  const rows = d.attendees.map(a => `
+    <tr style="${a.is_active?'':'opacity:.5'}">
+      <td><strong>${esc(a.name)}</strong>
+        ${a.is_claimed ? '' : ' <span class="badge b-unclaimed">unclaimed</span>'}
+        ${!a.is_active ? ' <span class="badge b-absent">inactive</span>' : ''}
+        ${a.device_hash ? ' <span class="badge b-none" title="device bound">📱</span>' : ''}
+      </td>
+      <td style="font-family:ui-monospace,monospace;font-size:.85rem">${esc(a.student_id)}</td>
+      <td>${tierBadge(a.tier)}</td>
+      <td>${a.section?esc(a.section):'—'}</td>
+      <td style="white-space:nowrap">
+        <select onchange="changeTier(${a.id}, this.value)" style="padding:.25rem .4rem;font-size:.8rem;width:auto">
+          <option value="exec" ${a.tier==='exec'?'selected':''}>Executive</option>
+          <option value="member" ${a.tier==='member'?'selected':''}>Member</option>
+          <option value="provi" ${a.tier==='provi'?'selected':''}>Provi</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="toggleActive(${a.id}, ${!a.is_active})">
+          ${a.is_active?'Deactivate':'Activate'}</button>
+        ${a.device_hash ? `<button class="btn btn-ghost btn-sm" onclick="resetDevice(${a.id})">Reset Device</button>` : ''}
+        ${!a.is_claimed ? `<button class="btn btn-danger btn-sm" onclick="deleteAttendee(${a.id})">Delete</button>` : ''}
+      </td>
+    </tr>`).join('');
+  main.innerHTML = `
+    <div class="toolbar">
+      <div class="grow"><h2>Roster · ${d.attendees.length}</h2>
+        <p style="color:var(--muted);font-size:.85rem;margin:.25rem 0 0">
+          ${claimed} claimed · ${unclaimed} waiting to claim · 📱 = device bound</p>
+      </div>
+      <button class="btn btn-primary" onclick="openBulkImport()">+ Import Roster</button>
+    </div>
+    <div class="card" style="padding:1rem 1.2rem">
+      <table class="table"><thead><tr>
+        <th>Name</th><th>Student ID</th><th>Tier</th><th>Section</th><th>Manage</th>
+      </tr></thead><tbody>${rows || '<tr><td colspan="5" class="empty">No attendees yet.</td></tr>'}</tbody></table>
+    </div>`;
+}
+async function changeTier(uid, tier){
+  try{ await api('/api/admin/attendees/'+uid,'PATCH',{tier}); toast('Tier updated'); render(); }
+  catch(e){ toast(e.message, true); }
+}
+async function toggleActive(uid, active){
+  try{ await api('/api/admin/attendees/'+uid,'PATCH',{is_active:active});
+    toast(active?'Reactivated':'Deactivated'); render(); } catch(e){ toast(e.message, true); }
+}
+async function resetDevice(uid){
+  if (!confirm('Reset device binding for this attendee? Their next check-in will re-bind to a new device.')) return;
+  try{ await api('/api/admin/attendees/'+uid,'PATCH',{reset_device:true});
+    toast('Device binding cleared'); render(); } catch(e){ toast(e.message, true); }
+}
+async function deleteAttendee(uid){
+  if (!confirm('Delete this unclaimed roster entry?')) return;
+  try{ await api('/api/admin/attendees/'+uid,'DELETE'); toast('Deleted'); render(); }
+  catch(e){ toast(e.message, true); }
+}
+function openBulkImport(){
+  const div = document.createElement('div'); div.id='importModal';
+  div.innerHTML = `
+    <div class="modal-bg" onclick="if(event.target===this)closeModal('importModal')">
+      <div class="modal" style="max-width:620px">
+        <h2 style="margin-bottom:.3rem">Import Attendee Roster</h2>
+        <p class="lead">Format: <code>student_id, name, section</code> · section optional</p>
+        <div style="background:var(--navy-50);padding:.7rem .9rem;border-radius:5px;
+          font-family:ui-monospace,monospace;font-size:.78rem;margin-bottom:.9rem;color:var(--navy-900)">
+          2024-00123, Maria Santos, BSED-3A<br>
+          2024-00124, Juan Dela Cruz<br>
+          2024-00125, Ana Reyes, BSCS-2B
+        </div>
+        <div style="display:grid;grid-template-columns:1fr;gap:.7rem;margin-bottom:.7rem">
+          <div><label>Default Tier</label>
+            <select id="i_tier"><option value="provi">Provisionary</option>
+              <option value="member">Official Member</option>
+              <option value="exec">Executive Board</option></select></div>
+        </div>
+        <div><label>Roster Text</label>
+          <textarea id="i_text" rows="10" style="font-family:ui-monospace,monospace;font-size:.82rem"
+            placeholder="2024-00123, Maria Santos, BSED-3A&#10;2024-00124, Juan Dela Cruz"></textarea></div>
+        <div id="i_msg" class="msg err"></div>
+        <div style="display:flex;gap:.5rem;justify-content:flex-end;margin-top:1rem">
+          <button class="btn btn-ghost" onclick="closeModal('importModal')">Cancel</button>
+          <button class="btn btn-primary" onclick="submitBulkImport()">Import</button>
+        </div>
+      </div></div>`;
+  document.body.appendChild(div);
+}
+async function submitBulkImport(){
+  const msg = document.getElementById('i_msg'); msg.classList.remove('show');
+  try{
+    const d = await api('/api/admin/attendees/bulk','POST',{
+      text: document.getElementById('i_text').value,
+      tier: document.getElementById('i_tier').value});
+    let m = `Created ${d.created}, updated ${d.updated}`;
+    if (d.skipped.length) m += ` · skipped ${d.skipped.length}`;
+    toast(m);
+    closeModal('importModal'); render();
+    if (d.skipped.length) console.warn('Skipped rows:', d.skipped);
+  } catch(e){ msg.textContent = e.message; msg.classList.add('show'); }
+}
+
+/* ---------- ADMIN: FLAGS & AUDIT ---------- */
+async function vAdminFlags(main){
+  const [fd, ld] = await Promise.all([
+    api('/api/admin/flags'),
+    api('/api/admin/logs')
+  ]);
+  const flagRows = fd.flags.length ? fd.flags.map(f=>`
+    <tr>
+      <td><span class="badge b-flag">${esc(f.kind)}</span></td>
+      <td><strong>${esc(f.user_name||'?')}</strong><br><small>${esc(f.student_id||'')}</small></td>
+      <td>${esc(f.session_title||'—')}</td>
+      <td>${esc(f.detail||'')}</td>
+      <td>${fmtDate(f.created_at)}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="resolveFlag(${f.id})">Resolve</button></td>
+    </tr>`).join('') : `<tr><td colspan="6" class="empty">No unresolved flags.</td></tr>`;
+
+  const logRows = ld.logs.length ? ld.logs.map(l=>`
+    <tr>
+      <td>${fmtDate(l.created_at)}</td>
+      <td>${esc(l.user_name||'System')}</td>
+      <td>${esc(l.action)}</td>
+      <td><code>${esc(l.ip)}</code></td>
+      <td>${esc(l.notes||'')}</td>
+    </tr>`).join('') : `<tr><td colspan="5" class="empty">No logs recorded yet.</td></tr>`;
+
+  main.innerHTML = `
+    <div class="toolbar"><h2>Flags &amp; Audit Log</h2></div>
+    <div class="card">
+      <h2>Anti-Cheat Flags</h2>
+      <p class="lead">Device changes and IP collisions requiring review.</p>
+      <table class="table"><thead><tr>
+        <th>Type</th><th>User</th><th>Session</th><th>Detail</th><th>Time</th><th></th>
+      </tr></thead><tbody>${flagRows}</tbody></table>
+    </div>
+    <div class="card">
+      <h2>Recent Activity Log</h2>
+      <p class="lead">Every check-in attempt is recorded.</p>
+      <table class="table"><thead><tr>
+        <th>Time</th><th>User</th><th>Action</th><th>IP</th><th>Notes</th>
+      </tr></thead><tbody>${logRows}</tbody></table>
+    </div>`;
+}
+async function resolveFlag(fid){
+  try{ await api('/api/admin/flags/'+fid+'/resolve','POST'); toast('Resolved'); render(); }
+  catch(e){ toast(e.message, true); }
+}
+
+/* ---------- ADMIN: TRACE ---------- */
+async function vAdminTrace(main){
+  const d = await api('/api/admin/attendees');
+  const claimed = d.attendees.filter(a => a.is_claimed);
+  const opts = claimed.map(a=>`<option value="${a.id}">${esc(a.name)} · ${esc(a.student_id)}</option>`).join('');
+  main.innerHTML = `
+    <div class="toolbar"><h2>Contact Tracing</h2></div>
+    <div class="card">
+      <p class="lead">Find everyone who attended the same class as a specific member within a date range.</p>
+      <div class="grid grid-3" style="margin-bottom:.9rem">
+        <div><label>Attendee</label><select id="t_uid">${opts || '<option>No claimed attendees yet</option>'}</select></div>
+        <div><label>From</label><input id="t_from" type="datetime-local"></div>
+        <div><label>To</label><input id="t_to" type="datetime-local"></div>
+      </div>
+      <button class="btn btn-primary" onclick="runTrace()">Trace Contacts</button>
+    </div>
+    <div id="traceOut"></div>`;
+}
+async function runTrace(){
+  const p = new URLSearchParams();
+  p.set('user_id', document.getElementById('t_uid').value);
+  const frm = document.getElementById('t_from').value, to = document.getElementById('t_to').value;
+  if (frm) p.set('from', frm); if (to) p.set('to', to);
+  const out = document.getElementById('traceOut');
+  try{
+    const d = await api('/api/admin/trace?'+p);
+    const subject = d.subject ? `<strong>${esc(d.subject.name)}</strong> (${esc(d.subject.student_id)})` : '';
+    const cards = d.contacts.length ? d.contacts.map(c=>`
+      <div class="session-item"><div class="info">
+        <div class="title">${esc(c.name)} ${tierBadge(c.tier)}</div>
+        <div class="meta"><span>${esc(c.student_id)}</span>
+          <span>${c.shared_sessions} shared class${c.shared_sessions===1?'':'es'}</span></div>
+      </div></div>`).join('') : '<div class="empty">No shared sessions found in that range.</div>';
+    out.innerHTML = `<div class="card"><h2>${d.contacts.length} contact${d.contacts.length===1?'':'s'} of ${subject}</h2>
+      <p class="lead">Ranked by number of shared sessions.</p>${cards}</div>`;
+  } catch(e){ out.innerHTML = `<div class="card"><div class="msg err show">${esc(e.message)}</div></div>`; }
+}
+
+/* ---------- ADMIN: CHANGE PASSWORD ---------- */
+function openChangePassword(){
+  const div = document.createElement('div'); div.id='pwModal';
+  div.innerHTML = `
+    <div class="modal-bg" onclick="if(event.target===this)closeModal('pwModal')">
+      <div class="modal">
+        <h2 style="margin-bottom:.3rem">Change Admin Password</h2>
+        <p class="lead">This account is shared by the Executive Board.</p>
+        <div class="grid grid-2">
+          <div style="grid-column:1/-1"><label>New Password (min 6)</label><input id="np1" type="password"></div>
+          <div style="grid-column:1/-1"><label>Confirm New Password</label><input id="np2" type="password"></div>
+        </div>
+        <div id="pw_msg" class="msg err"></div>
+        <div style="display:flex;gap:.5rem;justify-content:flex-end;margin-top:1rem">
+          <button class="btn btn-ghost" onclick="closeModal('pwModal')">Cancel</button>
+          <button class="btn btn-primary" onclick="submitPassword()">Update</button>
+        </div>
+      </div></div>`;
+  document.body.appendChild(div);
+}
+async function submitPassword(){
+  const msg = document.getElementById('pw_msg');
+  const p1 = document.getElementById('np1').value, p2 = document.getElementById('np2').value;
+  msg.classList.remove('show');
+  if (p1 !== p2){ msg.textContent='Passwords do not match'; msg.classList.add('show'); return; }
+  try{ await api('/api/admin/change-password','POST',{new_password:p1});
+    closeModal('pwModal'); toast('Password updated'); }
+  catch(e){ msg.textContent = e.message; msg.classList.add('show'); }
+}
+
+/* ---------- CUSTOMER: DASHBOARD ---------- */
+async function vUserDashboard(main){
+  const d = await api('/api/me/dashboard');
+  const s = d.stats;
+  const todayBlock = d.today_class ? `
+    <div class="session-item pinned"><div class="info">
+      <div class="title">Today · ${esc(d.today_class.title)}</div>
+      <div class="meta">${typeBadge(d.today_class.type)}
+        <span>${fmtTime(d.today_class.starts_at)} – ${fmtTime(d.today_class.ends_at)}</span></div>
+    </div>
+    ${d.my_today ? `<div style="text-align:right">${statusBadge(d.my_today.status)}
+        <div style="font-size:.75rem;color:var(--muted);margin-top:.25rem">
+          at ${fmtTime(d.my_today.check_in_at)}</div></div>`
+      : `<div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="openScanner()">📷 Scan QR</button>
+          <button class="btn btn-ghost" onclick="openManualCode()">Enter Code</button>
+        </div>`}
+    </div>` : `<div class="empty">No class today. See you Friday or Saturday!</div>`;
+
+  const upcoming = d.upcoming.length ? d.upcoming.map(x=>`
+    <div class="session-item"><div class="info">
+      <div class="title">${esc(x.title)}</div>
+      <div class="meta">${typeBadge(x.type)}<span>${fmtDate(x.starts_at)}</span></div></div>
+      ${x.my_status ? statusBadge(x.my_status) : `<span class="badge b-none">not checked in</span>`}
+    </div>`).join('') : '<div class="empty">No upcoming sessions.</div>';
+
+  main.innerHTML = `
+    <div class="card" style="border-left:4px solid var(--gold-500)">
+      <h2>Welcome back, ${esc(S.user.name.split(' ')[0])}.</h2>
+      <p class="lead">${TIER_LABEL[S.user.tier]} · Student ID ${esc(S.user.student_id)}</p>
+    </div>
+    <div class="card"><h2>My Attendance</h2>
+      <div class="stats">
+        <div class="stat"><div class="n">${s.rate}%</div><div class="l">Attendance Rate</div></div>
+        <div class="stat"><div class="n">${s.present}</div><div class="l">Present</div></div>
+        <div class="stat"><div class="n">${s.late}</div><div class="l">Late</div></div>
+        <div class="stat"><div class="n">${s.excused}</div><div class="l">Excused</div></div>
+        <div class="stat"><div class="n">${s.absent}</div><div class="l">Absent</div></div>
+      </div></div>
+    <div class="card"><h2>Today's Class</h2>${todayBlock}</div>
+    <div class="card"><h2>Upcoming</h2>
+      <p class="lead">Every Friday &amp; Saturday · 5:30 PM – 8:30 PM</p>${upcoming}</div>`;
+}
+
+async function doCheckinCode(code){
+  try{
+    const hash = await computeDeviceHash();
+    const d = await api('/api/me/checkin','POST',{code, device_hash:hash});
+    closeModal('scanModal'); closeModal('manualModal');
+    toast('Checked in · '+d.status); render();
+  } catch(e){ toast(e.message, true); }
+}
+
+/* ---------- CUSTOMER: QR SCANNER ---------- */
+function openScanner(){
+  if (typeof Html5Qrcode === 'undefined'){
+    toast('Scanner library failed to load — use manual code entry', true);
+    openManualCode(); return;
+  }
+  const div = document.createElement('div'); div.id = 'scanModal';
+  div.innerHTML = `
+    <div class="modal-bg" onclick="if(event.target===this)closeScanner()">
+      <div class="modal" style="max-width:460px">
+        <h2 style="margin-bottom:.3rem;text-align:center">Scan the QR</h2>
+        <p class="lead" style="text-align:center">Point your camera at the QR shown by the admin.</p>
+        <div id="qr-reader"></div>
+        <div id="scan_msg" class="msg err" style="margin-top:.7rem"></div>
+        <div style="display:flex;gap:.5rem;justify-content:center;margin-top:1rem">
+          <button class="btn btn-ghost" onclick="closeScanner()">Cancel</button>
+          <button class="btn btn-ghost" onclick="closeScanner(); openManualCode()">Enter code instead</button>
+        </div>
+      </div></div>`;
+  document.body.appendChild(div);
+
+  const msg = document.getElementById('scan_msg');
+  const scanner = new Html5Qrcode("qr-reader");
+  S.scanner = scanner;
+  scanner.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 240 },
+    (decoded) => {
+      scanner.stop().catch(()=>{}); S.scanner = null;
+      const code = decoded.startsWith('PLVDC:') ? decoded : decoded;
+      doCheckinCode(code.trim());
+    },
+    (err) => { /* ignore per-frame errors */ }
+  ).catch(err => {
+    msg.textContent = 'Camera access denied: ' + err.message;
+    msg.classList.add('show');
+  });
+}
+function closeScanner(){
+  const m = document.getElementById('scanModal');
+  if (S.scanner){
+    S.scanner.stop().catch(()=>{}); S.scanner = null;
+  }
+  if (m) m.remove();
+}
+function openManualCode(){
+  const div = document.createElement('div'); div.id='manualModal';
+  div.innerHTML = `
+    <div class="modal-bg" onclick="if(event.target===this)closeModal('manualModal')">
+      <div class="modal" style="max-width:380px">
+        <h2 style="margin-bottom:.3rem">Enter Check-in Code</h2>
+        <p class="lead">Ask the admin for the 6-character code shown on the QR page.</p>
+        <input id="m_code" placeholder="e.g. ABC123" style="text-transform:uppercase;letter-spacing:.15em;text-align:center;font-size:1.2rem;font-family:ui-monospace,monospace" autofocus>
+        <div id="m_msg" class="msg err"></div>
+        <div style="display:flex;gap:.5rem;justify-content:flex-end;margin-top:1rem">
+          <button class="btn btn-ghost" onclick="closeModal('manualModal')">Cancel</button>
+          <button class="btn btn-primary" onclick="submitManualCode()">Check In</button>
+        </div>
+      </div></div>`;
+  document.body.appendChild(div);
+  const inp = document.getElementById('m_code');
+  setTimeout(()=>inp.focus(), 50);
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') submitManualCode(); });
+}
+function submitManualCode(){
+  const code = document.getElementById('m_code').value.trim().toUpperCase();
+  if (!code) return;
+  doCheckinCode(code);
+}
+
+/* ---------- CUSTOMER: SESSIONS / HISTORY / RULES ---------- */
+async function vUserSessions(main){
+  const d = await api('/api/me/dashboard');
+  const list = d.upcoming.length ? d.upcoming.map(s=>`
+    <div class="session-item"><div class="info">
+      <div class="title">${esc(s.title)}</div>
+      <div class="meta">${typeBadge(s.type)}<span>${fmtDate(s.starts_at)}</span></div></div>
+      ${s.my_status ? statusBadge(s.my_status) : `<span class="badge b-none">not checked in</span>`}
+    </div>`).join('') : '<div class="empty">No upcoming sessions.</div>';
+  main.innerHTML = `<div class="toolbar"><h2>Upcoming Classes</h2></div>
+    <div class="card" style="padding:1rem 1.2rem">${list}</div>`;
+}
+async function vUserAttendance(main){
+  const d = await api('/api/me/attendance');
+  const rows = d.records.length ? d.records.map(r=>`
+    <tr><td><strong>${esc(r.title)}</strong><br>
+        <small style="color:var(--muted)">${esc(r.type)}</small></td>
+      <td>${fmtDate(r.starts_at)}</td>
+      <td>${statusBadge(r.status)}</td>
+      <td>${r.check_in_at?fmtTime(r.check_in_at):'—'}</td>
+      <td>${r.check_out_at?fmtTime(r.check_out_at):'—'}</td>
+      <td>${r.is_mandatory?'✓':'—'}</td></tr>`).join('')
+    : `<tr><td colspan="6" class="empty">No attendance recorded yet.</td></tr>`;
+  main.innerHTML = `<div class="toolbar"><h2>My Attendance History</h2></div>
+    <div class="card" style="padding:1rem 1.2rem">
+      <table class="table"><thead><tr>
+        <th>Session</th><th>Date</th><th>Status</th><th>In</th><th>Out</th><th>Mandatory</th>
+      </tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+async function vUserRules(main){
+  try{
+    const d = await api('/api/policies');
+    main.innerHTML = `<div class="toolbar"><h2>Rules &amp; Policies</h2></div>
+      <div class="card policy-content">${d.markdown ? marked.parse(d.markdown) : 'Policies not found.'}</div>`;
+  } catch(e){
+    main.innerHTML = `<div class="card"><div class="msg err show">${esc(e.message)}</div></div>`;
+  }
+}
+
+/* ---------- BOOT ---------- */
+render();
+</script></body></html>
